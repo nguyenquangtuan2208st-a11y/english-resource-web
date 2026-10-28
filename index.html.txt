@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUFLIT English Learning Hub & Feedback Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        huflit: {
+                            blue: '#002B66',
+                            lightBlue: '#1D4ED8',
+                            orange: '#FF6B00',
+                            gold: '#F59E0B',
+                            dark: '#0F172A',
+                            light: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .star-rating i {
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.1s ease;
+        }
+        .star-rating i:hover {
+            transform: scale(1.15);
+        }
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-huflit-blue text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- HUFLIT Logo Branding -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-white p-2 rounded-xl shadow-md flex items-center justify-center w-12 h-12 border-2 border-huflit-orange">
+                        <span class="text-huflit-blue font-extrabold text-xl tracking-tighter">H</span>
+                        <span class="text-huflit-orange font-extrabold text-xl tracking-tighter">U</span>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-xl tracking-wide text-white block leading-tight">HUFLIT</span>
+                        <span class="text-xs text-amber-400 font-medium tracking-widest uppercase">English Resource Hub</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex space-x-1 font-medium text-sm">
+                    <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-amber-400 font-semibold">
+                        <i class="fa-solid fa-house mr-2"></i>Home
+                    </button>
+                    <button onclick="navigateTo('resources')" id="nav-resources" class="nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-slate-200">
+                        <i class="fa-solid fa-book-open mr-2"></i>Resources
+                    </button>
+                    <button onclick="navigateTo('quiz')" id="nav-quiz" class="nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-slate-200">
+                        <i class="fa-solid fa-list-check mr-2"></i>Practice Quiz
+                    </button>
+                    <button onclick="navigateTo('feedback')" id="nav-feedback" class="nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-slate-200">
+                        <i class="fa-solid fa-star mr-2"></i>Feedback
+                    </button>
+                </nav>
+
+                <!-- Auth Buttons / User Profile Badge -->
+                <div class="flex items-center space-x-3" id="auth-header-container">
+                    <!-- Populated dynamically via JavaScript -->
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-md text-white hover:bg-white/10 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Nav -->
+        <div id="mobile-menu" class="hidden md:hidden bg-huflit-blue border-t border-blue-900 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md font-medium text-white hover:bg-white/10">Home</button>
+            <button onclick="navigateTo('resources'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md font-medium text-white hover:bg-white/10">Resources</button>
+            <button onclick="navigateTo('quiz'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md font-medium text-white hover:bg-white/10">Practice Quiz</button>
+            <button onclick="navigateTo('feedback'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md font-medium text-white hover:bg-white/10">Feedback & Survey</button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- SECTION 1: HOME PAGE -->
+        <section id="section-home" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-huflit-blue to-blue-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                    <i class="fa-solid fa-graduation-cap text-[300px]"></i>
+                </div>
+                <div class="max-w-2xl relative z-10 space-y-6">
+                    <span class="inline-block bg-huflit-orange text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Official Student Portal</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold leading-tight">Elevate Your English Skills at HUFLIT</h1>
+                    <p class="text-blue-100 text-base sm:text-lg">Access premium academic resources, test preparation strategies, and interactive assessments tailored specifically for HUFLIT students.</p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button onclick="navigateTo('resources')" class="bg-huflit-orange hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5">
+                            Explore Resources <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                        <button onclick="navigateTo('feedback')" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl border border-white/20 transition">
+                            Share Website Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Features Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-blue-100 text-huflit-blue rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Interactive Learning</h3>
+                    <p class="text-slate-600 text-sm">Curated modules for TOEIC, Academic Writing, Business Communication, and Speaking fluency.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-amber-100 text-huflit-gold rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Self-Assessment</h3>
+                    <p class="text-slate-600 text-sm">Test your comprehension with instant scoring and explanation features.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-orange-100 text-huflit-orange rounded-xl flex items-center justify-center text-xl font-bold mb-4">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">Community Feedback</h3>
+                    <p class="text-slate-600 text-sm">Rate your platform experience with 5-star feedback and help us improve HUFLIT services.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: LEARNING RESOURCES -->
+        <section id="section-resources" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-huflit-blue">English Learning Resources</h2>
+                    <p class="text-slate-500 text-sm mt-1">Select a category or search for learning materials.</p>
+                </div>
+                
+                <!-- Search & Category Filters -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400"></i>
+                        <input type="text" id="resource-search" oninput="filterResources()" placeholder="Search resources..." class="pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-huflit-blue w-full sm:w-64">
+                    </div>
+                    <select id="category-filter" onchange="filterResources()" class="bg-white border border-slate-300 text-slate-700 py-2.5 px-4 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-huflit-blue">
+                        <option value="all">All Topics</option>
+                        <option value="business">Business English</option>
+                        <option value="academic">Academic Writing</option>
+                        <option value="toeic">TOEIC Prep</option>
+                        <option value="speaking">Public Speaking</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Resource Cards Grid -->
+            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards render dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: PRACTICE QUIZ -->
+        <section id="section-quiz" class="hidden space-y-8 max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200">
+                <div class="border-b border-slate-200 pb-4 mb-6 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-huflit-orange uppercase tracking-wider">Interactive Test</span>
+                        <h2 class="text-2xl font-bold text-huflit-blue">HUFLIT English Proficiency Mini-Quiz</h2>
+                    </div>
+                    <span id="quiz-score-badge" class="bg-blue-50 text-huflit-blue font-bold text-sm px-3 py-1.5 rounded-xl border border-blue-200">Score: 0/0</span>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Quiz Questions injected here by JS -->
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-center">
+                    <button onclick="resetQuiz()" class="text-slate-500 hover:text-slate-800 text-sm font-semibold flex items-center">
+                        <i class="fa-solid fa-rotate-right mr-2"></i>Reset Quiz
+                    </button>
+                    <button onclick="gradeQuiz()" class="bg-huflit-blue hover:bg-blue-900 text-white font-bold px-6 py-2.5 rounded-xl shadow transition">
+                        Submit Answers
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: FEEDBACK & 5-STAR RATING PLATFORM -->
+        <section id="section-feedback" class="hidden space-y-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Feedback Submission Form -->
+                <div class="lg:col-span-6 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 space-y-6">
+                    <div>
+                        <span class="text-xs font-bold text-huflit-orange uppercase tracking-wider">User Experience</span>
+                        <h2 class="text-2xl font-bold text-huflit-blue">Website Feedback & 5-Star Rating</h2>
+                        <p class="text-slate-500 text-sm mt-1">Your review helps us enhance the learning platform for all HUFLIT students.</p>
+                    </div>
+
+                    <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)" class="space-y-5">
+                        
+                        <!-- Star Rating Selection -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Overall Rating <span class="text-red-500">*</span></label>
+                            <div class="star-rating flex items-center space-x-2 text-3xl text-slate-300" id="star-picker">
+                                <i class="fa-solid fa-star" data-rating="1" onclick="setRating(1)"></i>
+                                <i class="fa-solid fa-star" data-rating="2" onclick="setRating(2)"></i>
+                                <i class="fa-solid fa-star" data-rating="3" onclick="setRating(3)"></i>
+                                <i class="fa-solid fa-star" data-rating="4" onclick="setRating(4)"></i>
+                                <i class="fa-solid fa-star" data-rating="5" onclick="setRating(5)"></i>
+                            </div>
+                            <input type="hidden" id="selected-rating" value="0" required>
+                            <p id="rating-error" class="text-red-500 text-xs hidden mt-1">Please select a star rating.</p>
+                        </div>
+
+                        <!-- Question 1: Usability -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">1. How easy was it to navigate the website?</label>
+                            <select id="survey-ease" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-huflit-blue outline-none" required>
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="Very Easy">Very Easy & Intuitive</option>
+                                <option value="Moderately Easy">Moderately Easy</option>
+                                <option value="Neutral">Neutral / Average</option>
+                                <option value="Difficult">Difficult to find things</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 2: Helpfulness -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">2. Are the HUFLIT English resources helpful for your studies?</label>
+                            <select id="survey-helpfulness" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-huflit-blue outline-none" required>
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="Extremely Helpful">Extremely Helpful</option>
+                                <option value="Very Helpful">Very Helpful</option>
+                                <option value="Somewhat Helpful">Somewhat Helpful</option>
+                                <option value="Not Helpful">Not Helpful</option>
+                            </select>
+                        </div>
+
+                        <!-- Question 3: Feedback Text -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">3. Detailed Review & Suggestions</label>
+                            <textarea id="feedback-comments" rows="3" placeholder="What feature should we add next? Any specific English learning materials you need?" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-huflit-blue outline-none" required></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-huflit-orange hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-md transition">
+                            Submit Feedback
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Recent Reviews & Ratings Display -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-huflit-blue">Recent Student Reviews</h3>
+                        <span id="average-rating-badge" class="bg-amber-100 text-amber-800 font-bold text-xs px-3 py-1 rounded-full border border-amber-200">
+                            ⭐ Avg: 5.0 / 5.0
+                        </span>
+                    </div>
+
+                    <!-- Reviews List -->
+                    <div id="reviews-container" class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
+                        <!-- Dynamic Reviews Injected by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-huflit-dark text-slate-400 py-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <div class="flex justify-center items-center space-x-2">
+                <span class="font-bold text-white tracking-wider">HUFLIT</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-xs">Ho Chi Minh City University of Foreign Languages - Information Technology</span>
+            </div>
+            <p class="text-xs">&copy; 2026 HUFLIT English Resource Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- AUTH MODAL (Login / Sign Up) -->
+    <div id="auth-modal" class="fixed inset-0 modal-backdrop flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-blue-100 text-huflit-blue font-extrabold text-xl rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    HU
+                </div>
+                <h3 id="modal-title" class="text-2xl font-bold text-huflit-blue">HUFLIT Portal Login</h3>
+                <p class="text-slate-500 text-xs mt-1">Sign in with your HUFLIT credentials</p>
+            </div>
+
+            <!-- Login / Signup Form -->
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="name-field-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
+                    <input type="text" id="auth-name" placeholder="Nguyen Van A" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-huflit-blue">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Student ID / Email</label>
+                    <input type="text" id="auth-email" placeholder="student2110@huflit.edu.vn" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-huflit-blue">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" required class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-huflit-blue">
+                </div>
+
+                <div id="faculty-field-container" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">HUFLIT Faculty</label>
+                    <select id="auth-faculty" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-huflit-blue">
+                        <option value="Foreign Languages">Faculty of Foreign Languages</option>
+                        <option value="Information Technology">Faculty of Information Technology</option>
+                        <option value="International Business">Faculty of International Business</option>
+                        <option value="Tourism & Hospitality">Faculty of Tourism & Hospitality</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-huflit-blue hover:bg-blue-900 text-white font-bold py-3 rounded-xl shadow transition mt-2">
+                    Log In
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-xs font-semibold text-huflit-orange hover:underline">
+                    Don't have an account? Sign Up
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA STATE ---
+        let currentUser = null;
+        let authIsLoginMode = true;
+        let selectedStarRating = 0;
+
+        const resourcesData = [
+            {
+                id: 1,
+                title: "Academic Writing: Essay Structure",
+                category: "academic",
+                level: "Intermediate",
+                description: "Master thesis statements, topic sentences, and transition words for university-level academic papers.",
+                linkText: "Read Study Guide"
+            },
+            {
+                id: 2,
+                title: "TOEIC Listening & Reading Masterclass",
+                category: "toeic",
+                level: "All Levels",
+                description: "Key strategies for Part 5 grammar and Part 7 reading comprehension to boost your TOEIC score above 750+.",
+                linkText: "Start Practice"
+            },
+            {
+                id: 3,
+                title: "Business Email Etiquette & Templates",
+                category: "business",
+                level: "Advanced",
+                description: "Professional communication guide for corporate internships, email formatting, and formal vocabulary.",
+                linkText: "Download Templates"
+            },
+            {
+                id: 4,
+                title: "Public Speaking & Presentation Skills",
+                category: "speaking",
+                level: "Intermediate",
+                description: "Overcome fear, polish pronunciation, and deliver high-impact presentations in English classes.",
+                linkText: "View Video Guide"
+            },
+            {
+                id: 5,
+                title: "Academic Vocabulary List (AWL)",
+                category: "academic",
+                level: "Beginner to Advanced",
+                description: "Top 500 essential academic words frequently used in university exams and scientific research.",
+                linkText: "Explore Wordlist"
+            },
+            {
+                id: 6,
+                title: "Business Negotiations & Vocabulary",
+                category: "business",
+                level: "Advanced",
+                description: "Interactive phrases for professional discussions, polite disagreements, and contract terminology.",
+                linkText: "Start Module"
+            }
+        ];
+
+        const quizQuestions = [
+            {
+                id: 1,
+                question: "Which transition word is best suited for introducing a contrasting opinion in academic writing?",
+                options: ["Furthermore", "However", "Consequently", "For example"],
+                correct: 1
+            },
+            {
+                id: 2,
+                question: "In professional business emails, what is the appropriate closing for a formal query?",
+                options: ["See ya late!", "Sincerely,", "XOXO,", "Cheers buddy,"],
+                correct: 1
+            },
+            {
+                id: 3,
+                question: "Select the correct sentence for TOEIC Grammar:",
+                options: [
+                    "The committee have delay the meeting.",
+                    "The manager decided to postpone the annual conference.",
+                    "She don't know the answer.",
+                    "They was happy with the report."
+                ],
+                correct: 1
+            }
+        ];
+
+        let defaultReviews = [
+            {
+                name: "Tran Minh Anh",
+                faculty: "Foreign Languages",
+                rating: 5,
+                ease: "Very Easy",
+                helpfulness: "Extremely Helpful",
+                comment: "The TOEIC practice materials and Academic Writing guides helped me prepare so well for my midterms!",
+                date: "2026-03-20"
+            },
+            {
+                name: "Le Quoc Bao",
+                faculty: "Information Technology",
+                rating: 5,
+                ease: "Very Easy",
+                helpfulness: "Very Helpful",
+                comment: "Clean interface with very clear English content. The 5-star feedback platform is a great feature!",
+                date: "2026-03-22"
+            }
+        ];
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserFromStorage();
+            loadReviewsFromStorage();
+            renderAuthHeader();
+            renderResources(resourcesData);
+            renderQuiz();
+        });
+
+        // --- NAVIGATION LOGIC ---
+        function navigateTo(sectionId) {
+            const sections = ['home', 'resources', 'quiz', 'feedback'];
+            sections.forEach(sec => {
+                const el = document.getElementById(`section-${sec}`);
+                const navBtn = document.getElementById(`nav-${sec}`);
+                if (sec === sectionId) {
+                    el.classList.remove('hidden');
+                    if(navBtn) navBtn.className = "nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-amber-400 font-semibold";
+                } else {
+                    el.classList.add('hidden');
+                    if(navBtn) navBtn.className = "nav-btn px-4 py-2 rounded-lg transition hover:bg-white/10 text-slate-200";
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- USER AUTHENTICATION (LOCAL STORAGE) ---
+        function loadUserFromStorage() {
+            const stored = localStorage.getItem('huflit_user');
+            if (stored) {
+                try { currentUser = JSON.parse(stored); } catch(e) { currentUser = null; }
+            }
+        }
+
+        function renderAuthHeader() {
+            const container = document.getElementById('auth-header-container');
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right hidden sm:block">
+                            <span class="block text-xs font-bold text-amber-400">${currentUser.name || 'HUFLIT Student'}</span>
+                            <span class="block text-[10px] text-blue-200">${currentUser.faculty || 'HUFLIT'}</span>
+                        </div>
+                        <button onclick="handleLogout()" class="bg-red-500/20 hover:bg-red-500/30 text-red-200 border border-red-400/30 text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center">
+                            <i class="fa-solid fa-right-from-bracket mr-1.5"></i>Log Out
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal(true)" class="text-white hover:text-amber-300 text-sm font-semibold px-3 py-2 transition">
+                        Log In
+                    </button>
+                    <button onclick="openAuthModal(false)" class="bg-huflit-orange hover:bg-orange-600 text-white text-sm font-bold px-4 py-2 rounded-xl shadow transition">
+                        Sign Up
+                    </button>
+                `;
+            }
+        }
+
+        function openAuthModal(isLogin) {
+            authIsLoginMode = isLogin;
+            const modal = document.getElementById('auth-modal');
+            const title = document.getElementById('modal-title');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+            const nameField = document.getElementById('name-field-container');
+            const facultyField = document.getElementById('faculty-field-container');
+
+            if (authIsLoginMode) {
+                title.textContent = "HUFLIT Portal Login";
+                submitBtn.textContent = "Log In";
+                toggleBtn.textContent = "Don't have an account? Sign Up";
+                nameField.classList.add('hidden');
+                facultyField.classList.add('hidden');
+            } else {
+                title.textContent = "Create HUFLIT Account";
+                submitBtn.textContent = "Sign Up";
+                toggleBtn.textContent = "Already have an account? Log In";
+                nameField.classList.remove('hidden');
+                facultyField.classList.remove('hidden');
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            openAuthModal(!authIsLoginMode);
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const name = document.getElementById('auth-name').value.trim() || email.split('@')[0];
+            const faculty = document.getElementById('auth-faculty').value;
+
+            currentUser = {
+                email: email,
+                name: name,
+                faculty: faculty
+            };
+
+            localStorage.setItem('huflit_user', JSON.stringify(currentUser));
+            renderAuthHeader();
+            closeAuthModal();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('huflit_user');
+            renderAuthHeader();
+        }
+
+        // --- RESOURCE SEARCH & FILTER ---
+        function renderResources(items) {
+            const grid = document.getElementById('resources-grid');
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                        <p class="font-medium">No resources found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = items.map(res => `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-blue-50 text-huflit-blue font-bold text-xs px-2.5 py-1 rounded-lg uppercase">
+                                ${res.category}
+                            </span>
+                            <span class="text-xs font-semibold text-slate-400">${res.level}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">${res.title}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">${res.description}</p>
+                    </div>
+                    <button onclick="alert('Accessing study material: ${res.title}')" class="w-full bg-slate-100 hover:bg-huflit-blue hover:text-white text-huflit-blue font-bold text-sm py-2.5 rounded-xl transition flex items-center justify-center">
+                        ${res.linkText} <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterResources() {
+            const query = document.getElementById('resource-search').value.toLowerCase();
+            const category = document.getElementById('category-filter').value;
+
+            const filtered = resourcesData.filter(res => {
+                const matchesSearch = res.title.toLowerCase().includes(query) || res.description.toLowerCase().includes(query);
+                const matchesCat = category === 'all' || res.category === category;
+                return matchesSearch && matchesCat;
+            });
+
+            renderResources(filtered);
+        }
+
+        // --- PRACTICE QUIZ LOGIC ---
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = quizQuestions.map((q, qIndex) => `
+                <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                    <p class="font-bold text-slate-800 text-sm">${qIndex + 1}. ${q.question}</p>
+                    <div class="space-y-2">
+                        ${q.options.map((opt, optIndex) => `
+                            <label class="flex items-center p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-blue-50/50 transition">
+                                <input type="radio" name="quiz-q-${q.id}" value="${optIndex}" class="text-huflit-blue focus:ring-huflit-blue h-4 w-4">
+                                <span class="ml-3 text-sm text-slate-700">${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+            quizQuestions.forEach(q => {
+                const selected = document.querySelector(`input[name="quiz-q-${q.id}"]:checked`);
+                if (selected && parseInt(selected.value) === q.correct) {
+                    score++;
+                }
+            });
+
+            const badge = document.getElementById('quiz-score-badge');
+            badge.textContent = `Score: ${score}/${quizQuestions.length}`;
+            badge.className = score === quizQuestions.length 
+                ? "bg-green-100 text-green-800 font-bold text-sm px-3 py-1.5 rounded-xl border border-green-200"
+                : "bg-amber-100 text-amber-800 font-bold text-sm px-3 py-1.5 rounded-xl border border-amber-200";
+        }
+
+        function resetQuiz() {
+            renderQuiz();
+            const badge = document.getElementById('quiz-score-badge');
+            badge.textContent = `Score: 0/${quizQuestions.length}`;
+            badge.className = "bg-blue-50 text-huflit-blue font-bold text-sm px-3 py-1.5 rounded-xl border border-blue-200";
+        }
+
+        // --- 5-STAR FEEDBACK & REVIEW LOGIC ---
+        function setRating(rating) {
+            selectedStarRating = rating;
+            document.getElementById('selected-rating').value = rating;
+            document.getElementById('rating-error').classList.add('hidden');
+
+            const stars = document.querySelectorAll('#star-picker i');
+            stars.forEach((star, idx) => {
+                if (idx < rating) {
+                    star.className = "fa-solid fa-star text-amber-400";
+                } else {
+                    star.className = "fa-solid fa-star text-slate-300";
+                }
+            });
+        }
+
+        function loadReviewsFromStorage() {
+            const stored = localStorage.getItem('huflit_reviews');
+            if (stored) {
+                try { defaultReviews = JSON.parse(stored); } catch(e) {}
+            }
+            renderReviews();
+        }
+
+        function renderReviews() {
+            const container = document.getElementById('reviews-container');
+            if (defaultReviews.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 text-sm">No reviews submitted yet.</p>`;
+                return;
+            }
+
+            // Calculate Avg
+            const sum = defaultReviews.reduce((acc, curr) => acc + curr.rating, 0);
+            const avg = (sum / defaultReviews.length).toFixed(1);
+            document.getElementById('average-rating-badge').textContent = `⭐ Avg: ${avg} / 5.0 (${defaultReviews.length} reviews)`;
+
+            container.innerHTML = defaultReviews.map(rev => `
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">${rev.name}</h4>
+                            <span class="text-xs text-slate-400">${rev.faculty} • ${rev.date}</span>
+                        </div>
+                        <div class="text-amber-400 text-xs">
+                            ${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl">
+                        <span class="font-semibold text-huflit-blue">Navigation:</span> ${rev.ease} | 
+                        <span class="font-semibold text-huflit-blue">Helpfulness:</span> ${rev.helpfulness}
+                    </p>
+                    <p class="text-slate-700 text-sm italic">"${rev.comment}"</p>
+                </div>
+            `).join('');
+        }
+
+        function handleFeedbackSubmit(e) {
+            e.preventDefault();
+
+            if (selectedStarRating === 0) {
+                document.getElementById('rating-error').classList.remove('hidden');
+                return;
+            }
+
+            const ease = document.getElementById('survey-ease').value;
+            const helpfulness = document.getElementById('survey-helpfulness').value;
+            const comment = document.getElementById('feedback-comments').value.trim();
+
+            const newReview = {
+                name: currentUser ? currentUser.name : "HUFLIT Student",
+                faculty: currentUser ? currentUser.faculty : "General",
+                rating: selectedStarRating,
+                ease: ease,
+                helpfulness: helpfulness,
+                comment: comment,
+                date: new Date().toISOString().split('T')[0]
+            };
+
+            defaultReviews.unshift(newReview);
+            localStorage.setItem('huflit_reviews', JSON.stringify(defaultReviews));
+            renderReviews();
+
+            // Reset Form
+            document.getElementById('feedback-form').reset();
+            setRating(0);
+            alert("Thank you for your feedback! Your review has been published.");
+        }
+    </script>
+</body>
+</html>
